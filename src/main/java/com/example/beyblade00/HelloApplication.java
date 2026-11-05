@@ -31,11 +31,12 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        this.escenaPrincipal = primaryStage;
+        this.escenarioPrincipal = primaryStage;
         primaryStage.setTitle("Registro Beyblade X");
         BeybladeObservableList.addAll(dao.cargar());
 
         crearEscenaLogin();
+        crearEscenaPrincipal();
 
         escenarioPrincipal.setScene(escenaLogin);
         escenarioPrincipal.show();
@@ -71,7 +72,9 @@ public class HelloApplication extends Application {
             escenaLogin.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
         }
 
-        BeybladeObservableList.addAll(dao.cargar());
+
+
+        private void crearEscenaPrincipal(){
 
         Label titulo = new Label("SISTEMA BEYBLADE X");
         titulo.getStyleClass().addAll("h3", "text-primary", "b");
@@ -93,8 +96,7 @@ public class HelloApplication extends Application {
 
         botonRegistrar.disableProperty().bind(
                 campoNombre.textProperty().isEmpty()
-                .or(campoContrasena.textProperty().isEmpty())
-        );
+                .or(campoContrasena.textProperty().isEmpty()));
 
         BooleanBinding formularioIncompleto = campoNombre.textProperty().isEmpty()
                 .or(campoContrasena.textProperty().isEmpty());
@@ -164,8 +166,8 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(raiz, 700, 400);
         scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
 
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        escenaPrincipal = new Scene (raiz, 720, 440);
+        escenaPrincipal.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
     }
 
 
