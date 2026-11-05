@@ -148,7 +148,7 @@ public class HelloApplication extends Application {
         formulario.add(campoNombre, 1, 0);
         formulario.add(new Label("Sistema: "), 0, 1);
         formulario.add(comboSistema, 1, 1);
-        formulario.add(new Label("contraseña: "), 0, 2);
+        formulario.add(new Label("contraseña : "), 0, 2);
         formulario.add(campoContrasena, 1, 2);
 
         VBox panelIzquierdo = new VBox (15, titulo, formulario, botonRegistrar);
