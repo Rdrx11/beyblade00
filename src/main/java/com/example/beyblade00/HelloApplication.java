@@ -1,25 +1,78 @@
 package com.example.beyblade00;
 
+import com.example.beyblade00.Dao.BeybladeDao;
 import com.example.beyblade00.Model.BeybladeModel;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-
+import javafx.beans.binding.BooleanBinding;
 import org.controlsfx.control.Notifications;
 import org.kordamp.bootstrapfx.BootstrapFX;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+
 
 public class HelloApplication extends Application {
-    private final List<BeybladeModel> listaBeyblade = new ArrayList<>();
+    private final BeybladeDao dao = new BeybladeDao();
+    private final ObservableList<BeybladeModel> BeybladeObservableList = FXCollections.observableArrayList();
+
+    private Stage escenarioPrincipal;
+    private Scene escenaLogin;
+    private Scene escenaPrincipal;
+
+
     @Override
     public void start(Stage primaryStage) {
+        this.escenaPrincipal = primaryStage;
+        this.escenaPrincipal.setTitle("Sistema Beyblade x");
+        BeybladeObservableList.addAll(dao.cargar());
+
+        crearEscenaLogin();
+
+        escenarioPrincipal.setScene(escenaLogin);
+        escenarioPrincipal.show();
+    }
+
+        private void crearEscenaLogin(){
+            Label titulo = new Label("Acceso al sistema");
+            titulo.getStyleClass().addAll("h3", "text-primary", "b");
+
+            TextField campoUsuario = new TextField();
+            campoUsuario.setPromptText("Ingrese un nombre de usuario");
+            campoUsuario.getStyleClass().add("form-control");
+
+            PasswordField campoPassword = new PasswordField();
+            campoPassword.setPromptText("Ingrese una contraseña");
+            campoPassword.getStyleClass().add("form-control");
+
+            Button botonIngresar = new Button("Iniciar Sesion");
+            botonIngresar.getStyleClass().addAll("btn", "btn-success");
+
+            BooleanBinding loginIncompleto = campoUsuario.textProperty().isEmpty()
+                    .or(campoPassword.textProperty().isEmpty());
+            botonIngresar.disableProperty().bind(loginIncompleto);
+
+            VBox contenedor = new VBox(15, titulo, new Label("Usuario: "), campoUsuario,
+                    new Label ("Contraseña: "), campoPassword, botonIngresar);
+            contenedor.setPadding(new Insets(30));
+            contenedor.setMaxHeight(320);
+            contenedor.setAlignment(Pos.CENTER);
+
+            BorderPane raiz = new BorderPane(contenedor);
+            escenaLogin = new Scene(raiz, 720, 440);
+            escenaLogin.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
+        }
         primaryStage.setTitle("Registro Beyblade X");
+        BeybladeObservableList.addAll(dao.cargar());
+
         Label titulo = new Label("SISTEMA BEYBLADE X");
         titulo.getStyleClass().addAll("h3", "text-primary", "b");
 
@@ -38,29 +91,54 @@ public class HelloApplication extends Application {
         Button botonRegistrar = new Button("Registrar Beyblade");
         botonRegistrar.getStyleClass().addAll("btn", "btn-primary");
 
-        ListView<String> listaVisual = new ListView<>();
+        botonRegistrar.disableProperty().bind(
+                campoNombre.textProperty().isEmpty()
+                .or(campoContrasena.textProperty().isEmpty())
+        );
+
+        BooleanBinding formularioIncompleto = campoNombre.textProperty().isEmpty()
+                .or(campoContrasena.textProperty().isEmpty());
+
+        botonRegistrar.disableProperty().bind(formularioIncompleto);
+
+        TableView<BeybladeModel> tablaBeyblades = new TableView<>();
+
+
+        TableColumn<BeybladeModel, String> colSistema = new TableColumn<>("Sistema");
+        colSistema.setCellValueFactory(new PropertyValueFactory<>("sistema"));
+        colSistema.setPrefWidth(120);
+
+        TableColumn<BeybladeModel, String> colNombre = new TableColumn<>("Nombre Beyblade");
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        colNombre.setPrefWidth(200);
+
+        tablaBeyblades.getColumns().addAll(colSistema, colNombre);
+        tablaBeyblades.setItems(BeybladeObservableList);
+
 
         botonRegistrar.setOnAction(e-> {
             String nombre = campoNombre.getText().trim();
             String sistema = comboSistema.getValue();
             String pass =  campoContrasena.getText().trim();
-            if (nombre.isEmpty() || pass.isEmpty()){
-                Notifications.create()
-                        .title("campos Icompletos")
-                        .text("Debes ingresar un nombre y una contraseña")
-                        .showWarning();
-                return;
-            }
-            BeybladeModel nuevoBey = new BeybladeModel(nombre, sistema, pass);
-            listaBeyblade.add(nuevoBey);
 
-            listaVisual.getItems().add(nuevoBey.toString());
-            Notifications.create()
-                    .title("registro Exitoso")
-                    .title("Se guardo " + nombre + " correctamente")
-                    .showInformation();
-            campoNombre.clear();
-            campoContrasena.clear();
+            BeybladeModel nuevoBey = new BeybladeModel(nombre, sistema, pass);
+            BeybladeObservableList.add(nuevoBey);
+            try {
+                dao.guardar(new ArrayList<>(BeybladeObservableList));
+
+                Notifications.create()
+                        .title("registro Exitoso")
+                        .text("Se guardo " + nombre + " correctamente")
+                        .showInformation();
+                campoNombre.clear();
+                campoContrasena.clear();
+            } catch (IOException ex){
+                Notifications.create()
+                        .title("Error de Guardado")
+                        .text("No se pudo escribir en el disco.")
+                        .showError();
+                ex.printStackTrace();
+            }
         });
 
         GridPane formulario = new GridPane();
@@ -76,7 +154,7 @@ public class HelloApplication extends Application {
         VBox panelIzquierdo = new VBox (15, titulo, formulario, botonRegistrar);
         panelIzquierdo.setPadding(new Insets(15));
 
-        VBox panelDerecho = new VBox(10, new Label("Beyblades Registrados: "), listaVisual);
+        VBox panelDerecho = new VBox(10, new Label("Beyblades Registrados: "), tablaBeyblades);
         panelDerecho.setPadding(new Insets(15));
 
         HBox raiz = new HBox(20, panelIzquierdo, panelDerecho);
@@ -89,6 +167,7 @@ public class HelloApplication extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
 
     public static void main(String[] args){
         launch(args);
