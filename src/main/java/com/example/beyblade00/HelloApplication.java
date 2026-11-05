@@ -102,6 +102,12 @@ public class HelloApplication extends Application {
                     campoNombre.textProperty().isEmpty()
                     .or(campoContrasena.textProperty().isEmpty()));
 
+            Button botonCerrarSesion = new Button("Cerrar sesion");
+            botonCerrarSesion.getStyleClass().addAll("btn", "danger");
+
+            botonCerrarSesion.setOnAction(e-> escenarioPrincipal.setScene(escenaLogin));
+
+
             TableView<BeybladeModel> tablaBeyblades = new TableView<>();
 
 
@@ -152,7 +158,7 @@ public class HelloApplication extends Application {
             formulario.add(new Label("contraseña : "), 0, 2);
             formulario.add(campoContrasena, 1, 2);
 
-            VBox panelIzquierdo = new VBox (15, titulo, formulario, botonRegistrar);
+            VBox panelIzquierdo = new VBox (15, titulo, formulario, botonRegistrar, botonCerrarSesion);
             panelIzquierdo.setPadding(new Insets(15));
 
             VBox panelDerecho = new VBox(10, new Label("Beyblades Registrados: "), tablaBeyblades);
