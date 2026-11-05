@@ -70,7 +70,6 @@ public class HelloApplication extends Application {
             escenaLogin = new Scene(raiz, 720, 440);
             escenaLogin.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
         }
-        primaryStage.setTitle("Registro Beyblade X");
         BeybladeObservableList.addAll(dao.cargar());
 
         Label titulo = new Label("SISTEMA BEYBLADE X");
