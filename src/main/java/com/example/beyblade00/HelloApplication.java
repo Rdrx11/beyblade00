@@ -32,7 +32,7 @@ public class HelloApplication extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.escenaPrincipal = primaryStage;
-        this.escenaPrincipal.setTitle("Sistema Beyblade x");
+        primaryStage.setTitle("Registro Beyblade X");
         BeybladeObservableList.addAll(dao.cargar());
 
         crearEscenaLogin();
@@ -70,6 +70,7 @@ public class HelloApplication extends Application {
             escenaLogin = new Scene(raiz, 720, 440);
             escenaLogin.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
         }
+
         BeybladeObservableList.addAll(dao.cargar());
 
         Label titulo = new Label("SISTEMA BEYBLADE X");
