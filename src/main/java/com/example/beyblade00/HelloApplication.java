@@ -98,10 +98,9 @@ public class HelloApplication extends Application {
             Button botonRegistrar = new Button("Registrar Beyblade");
             botonRegistrar.getStyleClass().addAll("btn", "btn-primary");
 
-            BooleanBinding formularioIncompleto = campoNombre.textProperty().isEmpty()
-                    .or(campoContrasena.textProperty().isEmpty());
-
-            botonRegistrar.disableProperty().bind(formularioIncompleto);
+            botonRegistrar.disableProperty().bind(
+                    campoNombre.textProperty().isEmpty()
+                    .or(campoContrasena.textProperty().isEmpty()));
 
             TableView<BeybladeModel> tablaBeyblades = new TableView<>();
 
@@ -163,10 +162,7 @@ public class HelloApplication extends Application {
             raiz.setPadding(new Insets(15));
             raiz.setAlignment(Pos.CENTER);
 
-            Scene scene = new Scene(raiz, 700, 400);
-            scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
-
-            escenaPrincipal = new Scene (raiz, 720, 440);
+            escenaPrincipal = new Scene (raiz, 700, 400);
             escenaPrincipal.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
         }
 
