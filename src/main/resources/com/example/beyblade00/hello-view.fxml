@@ -4,13 +4,38 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<HBox spacing="20.0" alignment="CENTER" xmlns="http.//javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.beyblade00.controller.BeybladeController">
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+        <Insets top="15" right="15" bottom="15" left="15"/>
     </padding>
+    <VBox spacing="15.0">
+        <Label text="SISTEMA BEYBLADE X" styleClass="h3, text-primary, b"/>
+        <TextField fx:id="campoNombre" promptText="Ej: Dran Sword 3-60F" styleClass="form-control"
+                   GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
-</VBox>
+        <Label text="Sistema: " GridPane.ColumnIndex="0" GridPane.rowIndex="0"/>
+        <ComboBox fx:id="comboSistema" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+        <Label text="Contraseña: " GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <PasswordField fx:id="campoContrasena" text="Registrar Beyblade" styleClass="btn, btn-primary"
+                       onAction="#onRegistrarClick"/>
+    </VBox>
+    <VBox spacing="10.0">
+        <Label text="Beyblade Registrados: "/>
+        <TableView fx:id="tablaBeyblades">
+            <columns>
+              <TableColumn fx:id="colSistema" text="Sistema" prefWidth="120"/>
+              <TableColumn fx:id="colNombre" text="Nombre" prefWidth="200"/>
+            </columns>
+        </TableView>
+    </VBox>
+</HBox>
