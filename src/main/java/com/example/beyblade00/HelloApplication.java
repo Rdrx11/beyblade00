@@ -61,6 +61,10 @@ public class HelloApplication extends Application {
                     .or(campoPassword.textProperty().isEmpty());
             botonIngresar.disableProperty().bind(loginIncompleto);
 
+            botonIngresar.setOnAction(e -> {
+                escenarioPrincipal.setScene(escenaPrincipal);
+            });
+
             VBox contenedor = new VBox(15, titulo, new Label("Usuario: "), campoUsuario,
                     new Label ("Contraseña: "), campoPassword, botonIngresar);
             contenedor.setPadding(new Insets(30));
@@ -76,99 +80,95 @@ public class HelloApplication extends Application {
 
         private void crearEscenaPrincipal(){
 
-        Label titulo = new Label("SISTEMA BEYBLADE X");
-        titulo.getStyleClass().addAll("h3", "text-primary", "b");
+            Label titulo = new Label("SISTEMA BEYBLADE X");
+            titulo.getStyleClass().addAll("h3", "text-primary", "b");
 
-        TextField campoNombre = new TextField();
-        campoNombre.setPromptText("Ej: Dran Sword 3-60F");
-        campoNombre.getStyleClass().add("form-control");
+            TextField campoNombre = new TextField();
+            campoNombre.setPromptText("Ej: Dran Sword 3-60F");
+            campoNombre.getStyleClass().add("form-control");
 
-        ComboBox<String> comboSistema = new ComboBox<>();
-        comboSistema.getItems().addAll("Bx (basic line)", "Ux (Unique line)", "Cx (Custom line");
-        comboSistema.getSelectionModel().selectFirst();
+            ComboBox<String> comboSistema = new ComboBox<>();
+            comboSistema.getItems().addAll("Bx (basic line)", "Ux (Unique line)", "Cx (Custom line");
+            comboSistema.getSelectionModel().selectFirst();
 
-        PasswordField campoContrasena = new PasswordField();
-        campoContrasena.setPromptText("Crear contraseña para este bey");
-        campoContrasena.getStyleClass().add("form-control");
+            PasswordField campoContrasena = new PasswordField();
+            campoContrasena.setPromptText("Crear contraseña para este bey");
+            campoContrasena.getStyleClass().add("form-control");
 
-        Button botonRegistrar = new Button("Registrar Beyblade");
-        botonRegistrar.getStyleClass().addAll("btn", "btn-primary");
+            Button botonRegistrar = new Button("Registrar Beyblade");
+            botonRegistrar.getStyleClass().addAll("btn", "btn-primary");
 
-        botonRegistrar.disableProperty().bind(
-                campoNombre.textProperty().isEmpty()
-                .or(campoContrasena.textProperty().isEmpty()));
+            BooleanBinding formularioIncompleto = campoNombre.textProperty().isEmpty()
+                    .or(campoContrasena.textProperty().isEmpty());
 
-        BooleanBinding formularioIncompleto = campoNombre.textProperty().isEmpty()
-                .or(campoContrasena.textProperty().isEmpty());
+            botonRegistrar.disableProperty().bind(formularioIncompleto);
 
-        botonRegistrar.disableProperty().bind(formularioIncompleto);
-
-        TableView<BeybladeModel> tablaBeyblades = new TableView<>();
+            TableView<BeybladeModel> tablaBeyblades = new TableView<>();
 
 
-        TableColumn<BeybladeModel, String> colSistema = new TableColumn<>("Sistema");
-        colSistema.setCellValueFactory(new PropertyValueFactory<>("sistema"));
-        colSistema.setPrefWidth(120);
+            TableColumn<BeybladeModel, String> colSistema = new TableColumn<>("Sistema");
+            colSistema.setCellValueFactory(new PropertyValueFactory<>("sistema"));
+            colSistema.setPrefWidth(120);
 
-        TableColumn<BeybladeModel, String> colNombre = new TableColumn<>("Nombre Beyblade");
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        colNombre.setPrefWidth(200);
+            TableColumn<BeybladeModel, String> colNombre = new TableColumn<>("Nombre Beyblade");
+            colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+            colNombre.setPrefWidth(200);
 
-        tablaBeyblades.getColumns().addAll(colSistema, colNombre);
-        tablaBeyblades.setItems(BeybladeObservableList);
+            tablaBeyblades.getColumns().addAll(colSistema, colNombre);
+            tablaBeyblades.setItems(BeybladeObservableList);
 
 
-        botonRegistrar.setOnAction(e-> {
-            String nombre = campoNombre.getText().trim();
-            String sistema = comboSistema.getValue();
-            String pass =  campoContrasena.getText().trim();
+            botonRegistrar.setOnAction(e-> {
+                String nombre = campoNombre.getText().trim();
+                String sistema = comboSistema.getValue();
+                String pass =  campoContrasena.getText().trim();
 
-            BeybladeModel nuevoBey = new BeybladeModel(nombre, sistema, pass);
-            BeybladeObservableList.add(nuevoBey);
-            try {
-                dao.guardar(new ArrayList<>(BeybladeObservableList));
+                BeybladeModel nuevoBey = new BeybladeModel(nombre, sistema, pass);
+                BeybladeObservableList.add(nuevoBey);
+                try {
+                    dao.guardar(new ArrayList<>(BeybladeObservableList));
 
-                Notifications.create()
-                        .title("registro Exitoso")
-                        .text("Se guardo " + nombre + " correctamente")
-                        .showInformation();
-                campoNombre.clear();
-                campoContrasena.clear();
-            } catch (IOException ex){
-                Notifications.create()
-                        .title("Error de Guardado")
-                        .text("No se pudo escribir en el disco.")
-                        .showError();
-                ex.printStackTrace();
-            }
-        });
+                    Notifications.create()
+                            .title("registro Exitoso")
+                            .text("Se guardo " + nombre + " correctamente")
+                            .showInformation();
+                    campoNombre.clear();
+                    campoContrasena.clear();
+                } catch (IOException ex){
+                    Notifications.create()
+                            .title("Error de Guardado")
+                            .text("No se pudo escribir en el disco.")
+                            .showError();
+                    ex.printStackTrace();
+                }
+            });
 
-        GridPane formulario = new GridPane();
-        formulario.setHgap(10);
-        formulario.setVgap(10);
-        formulario.add(new Label("Nombre: "), 0, 0);
-        formulario.add(campoNombre, 1, 0);
-        formulario.add(new Label("Sistema: "), 0, 1);
-        formulario.add(comboSistema, 1, 1);
-        formulario.add(new Label("contraseña : "), 0, 2);
-        formulario.add(campoContrasena, 1, 2);
+            GridPane formulario = new GridPane();
+            formulario.setHgap(10);
+            formulario.setVgap(10);
+            formulario.add(new Label("Nombre: "), 0, 0);
+            formulario.add(campoNombre, 1, 0);
+            formulario.add(new Label("Sistema: "), 0, 1);
+            formulario.add(comboSistema, 1, 1);
+            formulario.add(new Label("contraseña : "), 0, 2);
+            formulario.add(campoContrasena, 1, 2);
 
-        VBox panelIzquierdo = new VBox (15, titulo, formulario, botonRegistrar);
-        panelIzquierdo.setPadding(new Insets(15));
+            VBox panelIzquierdo = new VBox (15, titulo, formulario, botonRegistrar);
+            panelIzquierdo.setPadding(new Insets(15));
 
-        VBox panelDerecho = new VBox(10, new Label("Beyblades Registrados: "), tablaBeyblades);
-        panelDerecho.setPadding(new Insets(15));
+            VBox panelDerecho = new VBox(10, new Label("Beyblades Registrados: "), tablaBeyblades);
+            panelDerecho.setPadding(new Insets(15));
 
-        HBox raiz = new HBox(20, panelIzquierdo, panelDerecho);
-        raiz.setPadding(new Insets(15));
-        raiz.setAlignment(Pos.CENTER);
+            HBox raiz = new HBox(20, panelIzquierdo, panelDerecho);
+            raiz.setPadding(new Insets(15));
+            raiz.setAlignment(Pos.CENTER);
 
-        Scene scene = new Scene(raiz, 700, 400);
-        scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
+            Scene scene = new Scene(raiz, 700, 400);
+            scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
 
-        escenaPrincipal = new Scene (raiz, 720, 440);
-        escenaPrincipal.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
-    }
+            escenaPrincipal = new Scene (raiz, 720, 440);
+            escenaPrincipal.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
+        }
 
 
     public static void main(String[] args){
