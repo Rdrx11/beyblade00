@@ -11,6 +11,8 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.Button?>
+
 <HBox spacing="20.0" alignment="CENTER" xmlns="http.//javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.beyblade00.controller.BeybladeController">
@@ -29,6 +31,8 @@
         <PasswordField fx:id="campoContrasena" text="Registrar Beyblade" styleClass="btn, btn-primary"
                        onAction="#onRegistrarClick"/>
     </VBox>
+    <Button fx:id="botonRegistrar" text="Registrar Beyblade" styleClass="btn, btn-primary"
+            onAction="#onRegistrarClick"/>
     <VBox spacing="10.0">
         <Label text="Beyblade Registrados: "/>
         <TableView fx:id="tablaBeyblades">
