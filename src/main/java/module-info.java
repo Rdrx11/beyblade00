@@ -8,5 +8,5 @@ module com.example.beyblade {
 
     exports com.example.beyblade00;
     opens com.example.beyblade00.Model to javafx.base, javafx.fxml, com.google.gson;
-
+    opens com.example.beyblade00.controller to javafx.fxml;
 }
