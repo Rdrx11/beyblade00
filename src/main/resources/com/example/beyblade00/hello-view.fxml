@@ -33,6 +33,8 @@
     </VBox>
     <Button fx:id="botonRegistrar" text="Registrar Beyblade" styleClass="btn, btn-primary"
             onAction="#onRegistrarClick"/>
+    <Button fx:id="botonEleminar" text="Eliminar" styleClass="btn, btn-danger"
+            onAction="#onEleminarClick"/>
     <VBox spacing="10.0">
         <Label text="Beyblade Registrados: "/>
         <TableView fx:id="tablaBeyblades">
