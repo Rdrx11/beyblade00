@@ -10,6 +10,7 @@ public class BeybladeModel {
         this.sistema = sistema;
         this.contrasena = contrasena;
     }
+    public BeybladeModel(){}
 
     public String getNombre() {
         return nombre;

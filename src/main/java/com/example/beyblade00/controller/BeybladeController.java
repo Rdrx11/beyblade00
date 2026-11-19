@@ -11,6 +11,7 @@ import org.controlsfx.control.Notifications;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class BeybladeController {
     @FXML
@@ -21,6 +22,8 @@ public class BeybladeController {
     private PasswordField campoContrasena;
     @FXML
     private Button botonRegistrar;
+    @FXML
+    private Button botonEleminar;
 
     @FXML
     private TableView<BeybladeModel> tablaBeyblades;
@@ -34,8 +37,9 @@ public class BeybladeController {
 
     @FXML
     public void initialize() {
-        BeybladeObservableList.addAll(dao.cargar());
-
+        BeybladeObservableList.addAll(dao.cargar(BeybladeDao.Archivo_Bx));
+        BeybladeObservableList.addAll(dao.cargar(BeybladeDao.Archivo_Ux));
+        BeybladeObservableList.addAll(dao.cargar(BeybladeDao.Archivo_Cx));
 
         colSistema.setCellValueFactory(new PropertyValueFactory<>("Sistema"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("Nombre"));
@@ -48,6 +52,10 @@ public class BeybladeController {
                 campoNombre.textProperty().isEmpty()
                         .or(campoContrasena.textProperty().isEmpty())
         );
+
+        botonEleminar.disableProperty().bind(
+                tablaBeyblades.getSelectionModel().selectedItemProperty().isNull()
+        );
     }
     @FXML
     private void onRegistrarClick(){
@@ -59,7 +67,7 @@ public class BeybladeController {
         BeybladeObservableList.add(nuevoBey);
 
         try{
-            dao.guardar(new ArrayList<>(BeybladeObservableList));
+            guardarSistema();
             Notifications.create()
                     .title("Registro Exitoso")
                     .text("Se guardo " + nombre + "correctamente")
@@ -73,5 +81,45 @@ public class BeybladeController {
                     .showError();
             ex.printStackTrace();
         }
+    }
+    @FXML
+    private void onEleminarClick(){
+        BeybladeModel seleccionado = tablaBeyblades.getSelectionModel().getSelectedItem();
+        if(seleccionado != null){
+            BeybladeObservableList.remove(seleccionado);
+            try {
+                guardarSistema();
+                Notifications.create()
+                        .title("Eleminado")
+                        .text("Se elemino " + seleccionado.getNombre() + " correctamente")
+                        .show();
+                } catch (IOException e) {
+                    Notifications.create()
+                            .title("ERROR")
+                            .text("no se pudo actualizar el guardado")
+                            .showError();
+                    e.printStackTrace();
+            }
+        }
+    }
+    private void guardarSistema() throws IOException {
+        List<BeybladeModel> listaBx = new ArrayList<>();
+        List<BeybladeModel> listaUx = new ArrayList<>();
+        List<BeybladeModel> listaCx = new ArrayList<>();
+
+
+        for (BeybladeModel bey : BeybladeObservableList) {
+            String sistema = bey.getSistema().toUpperCase();
+            if (sistema.startsWith("BX")) {
+                listaBx.add(bey);
+            } else if (sistema.startsWith("UX")) {
+                listaUx.add(bey);
+            } else if (sistema.startsWith("CX")) {
+                listaCx.add(bey);
+            }
+        }
+        dao.guardar(BeybladeDao.Archivo_Bx, listaBx);
+        dao.guardar(BeybladeDao.Archivo_Ux, listaUx);
+        dao.guardar(BeybladeDao.Archivo_Cx, listaCx);
     }
 }
